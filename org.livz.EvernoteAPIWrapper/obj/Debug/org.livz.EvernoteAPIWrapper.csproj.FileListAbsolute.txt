@@ -1,0 +1,10 @@
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\bin\Debug\org.livz.EvernoteAPIWrapper.dll
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\bin\Debug\org.livz.EvernoteAPIWrapper.pdb
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\bin\Debug\Evernote.dll
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\bin\Debug\Thrift.dll
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\obj\Debug\org.livz.EvernoteAPIWrapper.dll
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\obj\Debug\org.livz.EvernoteAPIWrapper.pdb
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\bin\Debug\HtmlAgilityPack.dll
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\bin\Debug\HtmlAgilityPack.pdb
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\bin\Debug\HtmlAgilityPack.xml
+C:\Dev\Evernote\org.livz.EvernoteAPIWrapper\obj\Debug\org.livz.EvernoteAPIWrapper.csprojResolveAssemblyReference.cache

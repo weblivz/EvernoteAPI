@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Evernote.Core</id>
+    <version>0.5.0</version>
+    <title>Evernote Core</title>
+    <authors>Evernote</authors>
+    <owners>Evernote</owners>
+    <projectUrl>http://www.evernote.com/</projectUrl>
+    <iconUrl>http://www.evernote.com/about/media/img/product_icons/evernote-50.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A wrapper for the core api of Evernote</description>
+  </metadata>
+</package>
