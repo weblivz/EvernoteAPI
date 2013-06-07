@@ -9,6 +9,7 @@ namespace org.livz.EvernoteAPIWrapper
     public class NoteModel
     {
         public int Id { get; set; }
+        public Guid ExternalId { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
         public bool IsPublic { get; set; }

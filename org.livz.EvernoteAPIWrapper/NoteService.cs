@@ -182,6 +182,7 @@ namespace org.livz.EvernoteAPIWrapper
 
                 // we have a new note - etl the data
                 NoteModel newnote = new NoteModel();
+                newnote.ExternalId = new Guid(note.Guid);
                 newnote.Title = note.Title;
                 newnote.Text = ParseContent(note, content, resolver);
                 newnote.DateCreated = DateTime.Now;
