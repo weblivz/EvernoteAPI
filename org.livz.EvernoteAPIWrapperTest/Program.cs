@@ -12,10 +12,15 @@ namespace org.livz.EvernoteAPIWrapperTest
     class Program
     {
         // get a developer token for the sandox from here https://sandbox.evernote.com/api/DeveloperToken.action
-        static string authToken = "YOUR TOKEN";
+        static string authToken = "YOURKEY";
 
         static void Main(string[] args)
         {
+            #if DEBUG            
+            #else
+            Console.WriteLine("In release mode remember you need to have a token for the production box - your sandbox tokens will not work.");
+            #endif
+
             RunContentParsingTest();
             Guid id = RunCreateNoteTest();
             RunGetNoteTest(id);
@@ -42,11 +47,13 @@ namespace org.livz.EvernoteAPIWrapperTest
             NoteService svc = new NoteService(authToken);
 
             // create a new note
-            Guid id = svc.Create("Test Note", "Hello World. I am a test note");
+            Evernote.EDAM.Type.Note note = svc.Create("Test Note", "Hello World. I am a test note");
+
+            Guid id = new Guid(note.Guid);
 
             Assert.IsNotNull(id);
 
-            Console.WriteLine("Create new note with id " + id.ToString());
+            Console.WriteLine("Create new note with id " + id.ToString() + " and timestamp" + note.Updated + " and seq " + note.UpdateSequenceNum);
             Console.ReadKey();
 
             return id;

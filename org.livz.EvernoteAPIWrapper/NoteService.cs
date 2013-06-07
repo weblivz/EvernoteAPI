@@ -97,7 +97,7 @@ namespace org.livz.EvernoteAPIWrapper
         /// Creates a new note on evernote.
         /// </summary>
         /// <param name="title"></param>
-        public Guid Create(string title, string content)
+        public Note Create(string title, string content)
         {
             // creates the new note, sets the and content using the evernote format
             Note note = new Note();
@@ -107,8 +107,8 @@ namespace org.livz.EvernoteAPIWrapper
             // Send the new note to Evernote.
             Note newnote = _Instance.createNote(_authToken, note);
 
-            // return the new guid
-            return new Guid(newnote.Guid);
+            // return the new note with the guid and update timestamp
+            return newnote;
         }
 
         /// <summary>
@@ -234,9 +234,19 @@ namespace org.livz.EvernoteAPIWrapper
             return content.Trim();
         }
 
+        /// <summary>
+        /// Ommitted for now - we actually need to make an authenticated http POST to get each resource.
+        /// Will do this shortly. More info http://dev.evernote.com/start/core/resources.php
+        /// </summary>
+        /// <param name="note"></param>
+        /// <param name="html"></param>
         void ResolveMedia(NoteMetadata note, HtmlAgilityPack.HtmlDocument html)
         {
             if (note == null) return;
+
+            // TODO: We are removing these just now but we really want to download and locally store them via http POST
+            RemoveMedia(html);
+            return;
 
             //<en-media alt="Penultimate" type="image/png" hash="bb54c12582d7d1793fb860ae27fe9daa"></en-media>
             var els = html.DocumentNode.SelectNodes("//en-media");
@@ -269,6 +279,19 @@ namespace org.livz.EvernoteAPIWrapper
                     
                     // we can now replace the original media tag with the new one
                     element.ParentNode.ReplaceChild(replacementImage, element);
+                }
+            }
+        }
+
+        void RemoveMedia(HtmlAgilityPack.HtmlDocument html)
+        {
+            var els = html.DocumentNode.SelectNodes("//en-media");
+
+            if (els != null)
+            {
+                foreach (var element in els)
+                {
+                    element.Remove();
                 }
             }
         }
