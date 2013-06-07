@@ -115,6 +115,25 @@ namespace org.livz.EvernoteAPIWrapper
         }
 
         /// <summary>
+        /// Updates a new note on evernote.
+        /// </summary>
+        /// <param name="title"></param>
+        public Note Update(string guid, string title, string content)
+        {
+            // creates the new note, sets the and content using the evernote format
+            Note note = new Note();
+            note.Guid = guid;
+            note.Title = title;
+            note.Content = String.Format(TEMPLATE_BASIC_NOTE, content);
+
+            // Send the new note to Evernote.
+            Note newnote = _Instance.updateNote(_authToken, note);
+
+            // return the new note with the guid and update timestamp
+            return newnote;
+        }
+
+        /// <summary>
         /// This will return a list of notebooks given a user token.
         /// </summary>
         /// <param name="authToken"></param>
