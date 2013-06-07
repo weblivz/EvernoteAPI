@@ -18,9 +18,9 @@ namespace org.livz.EvernoteAPIWrapper
         NoteService _NoteInstance = null;
 
         #if DEBUG
-        private const string EVERNOTE_DOMAIN = "https://sandbox.evernote.com";
+            private string EVERNOTE_DOMAIN = "https://sandbox.evernote.com";
         #else
-          private const string EVERNOTE_DOMAIN = "https://www.evernote.com";
+            private string EVERNOTE_DOMAIN = "https://www.evernote.com";
         #endif
 
         public NotebookService(string authToken)

@@ -19,9 +19,9 @@ namespace org.livz.EvernoteAPIWrapper
         string _authToken = null;
 
         #if DEBUG
-        private const string EVERNOTE_DOMAIN = "https://sandbox.evernote.com";
+        private string EVERNOTE_DOMAIN = "https://sandbox.evernote.com";
         #else
-          private const string EVERNOTE_DOMAIN = "https://www.evernote.com";
+          private string EVERNOTE_DOMAIN = "https://www.evernote.com";
         #endif
 
         public UserService(string authToken)
@@ -48,6 +48,9 @@ namespace org.livz.EvernoteAPIWrapper
         /// <returns></returns>
         UserStore.Client CreateInstance()
         {
+            // override domain setting if we have one
+            if (!String.IsNullOrWhiteSpace(System.Configuration.ConfigurationManager.AppSettings["EVERNOTE_DOMAIN"])) EVERNOTE_DOMAIN = System.Configuration.ConfigurationManager.AppSettings["EVERNOTE_DOMAIN"];
+
             // first the user info
             Uri userStoreUrl = new Uri(EVERNOTE_DOMAIN + "/edam/user");
             TTransport userStoreTransport = new THttpClient(userStoreUrl);

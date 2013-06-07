@@ -12,13 +12,13 @@ namespace org.livz.EvernoteAPIWrapperTest
     class Program
     {
         // get a developer token for the sandox from here https://sandbox.evernote.com/api/DeveloperToken.action
-        static string authToken = "YOURKEY";
+        static string authToken = "S=s1:U=6b313:E=1463d6defca:C=13ee5bcc3cd:P=1cd:A=en-devtoken:V=2:H=b2673c69d543c25736e89e7880fa26ad";
 
         static void Main(string[] args)
         {
             #if DEBUG            
             #else
-            Console.WriteLine("In release mode remember you need to have a token for the production box - your sandbox tokens will not work.");
+            Console.WriteLine("In release mode remember you need to have a token for the production box - your sandbox tokens will not work. You can override by adding an EVERNOTE_DOMAIN TO THE appSettings in your web.config. E.g. <add key=\"EVERNOTE_DOMAIN\" value=\"https://sandbox.evernote.com\" />");
             #endif
 
             RunContentParsingTest();
