@@ -33,7 +33,7 @@ namespace org.livz.EvernoteAPIWrapperTest
             string content = File.ReadAllText("sample.xml");
             //Console.WriteLine(svc.StripContent(content));
 
-            string parsedContent = svc.BasicContent(null, content);
+            string parsedContent = svc.BasicContent(content);
 
             Assert.IsNotNullOrEmpty(parsedContent);
 

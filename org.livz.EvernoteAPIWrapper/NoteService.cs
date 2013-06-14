@@ -255,7 +255,18 @@ namespace org.livz.EvernoteAPIWrapper
 
         #region remove markup
 
-        public string BasicContent(Note note, string content)
+        /// <summary>
+        /// This returns a basic html view over the content. It removes most of the Evernote formatting
+        /// and is useful for local display and editing. If you just want text, look at StripContent();
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public string BasicContent(string content)
+        {
+            return BasicContent(null, content);
+        }
+
+        private string BasicContent(Note note, string content)
         {
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(content);
@@ -266,7 +277,11 @@ namespace org.livz.EvernoteAPIWrapper
             ResolveMedia(note, doc);
 
             // get the html for the document
-            content = doc.DocumentNode.SelectSingleNode("en-note").InnerHtml;
+            var node = doc.DocumentNode.SelectSingleNode("en-note");
+            if (node != null)
+                content = doc.DocumentNode.SelectSingleNode("en-note").InnerHtml;
+            else
+                content = doc.DocumentNode.InnerHtml;
 
             // remove any leading or trailing whitespace
             return content.Trim();
@@ -280,11 +295,11 @@ namespace org.livz.EvernoteAPIWrapper
         /// <param name="html"></param>
         void ResolveMedia(Note note, HtmlAgilityPack.HtmlDocument html)
         {
-            if (note == null) return;
-
             // TODO: We are removing these just now but we really want to download and locally store them via http POST
             RemoveMedia(html);
             return;
+
+            if (note == null) return;
 
             //<en-media alt="Penultimate" type="image/png" hash="bb54c12582d7d1793fb860ae27fe9daa"></en-media>
             var els = html.DocumentNode.SelectNodes("//en-media");
@@ -364,7 +379,7 @@ namespace org.livz.EvernoteAPIWrapper
 
         /// <summary>
         /// Loads the content as Xml and just return the text content with newlines preserved.
-        /// This removes images and so on. Just inline text content.
+        /// This removes images and so on. Just inline text content. It adds whitespace padding where it makes sense.
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
@@ -372,6 +387,9 @@ namespace org.livz.EvernoteAPIWrapper
         {            
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(content);
+            
+            // remove evernote newlines and use our own
+            doc.DocumentNode.InnerHtml = Regex.Replace(doc.DocumentNode.InnerHtml, @"<br[^>]*>", "\r\n\r\n");
 
             // get just the text content
             content = doc.DocumentNode.InnerText.Replace("&nbsp;", " ").Replace("&amp;", "&");
