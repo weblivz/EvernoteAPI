@@ -91,9 +91,11 @@ namespace org.livz.EvernoteAPIWrapper
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Note Get(Guid id)
+        public NoteModel Get(Guid id, TextResolver resolver)
         {
-            return _Instance.getNote(_authToken, id.ToString(), true, false, false, false);
+            Note note = _Instance.getNote(_authToken, id.ToString(), true, false, false, false);
+
+            return BuildNote(note, resolver);
         }
 
         /// <summary>
@@ -172,11 +174,11 @@ namespace org.livz.EvernoteAPIWrapper
             filter.NotebookGuid = notebookid.ToString(); // set the notebook to filter on
 
             // what do we want back from the query?
-            NotesMetadataResultSpec resultSpec = new NotesMetadataResultSpec() { IncludeTitle = true, IncludeUpdated = true };
+            //NotesMetadataResultSpec resultSpec = new NotesMetadataResultSpec() { IncludeTitle = true, IncludeUpdated = true };
 
             // execute the query for the notes
-            NotesMetadataList newNotes = _Instance.findNotesMetadata(_authToken, filter, pageNumber * pageSize, pageSize, resultSpec);
-
+            NoteList newNotes = _Instance.findNotes(_authToken, filter, pageNumber * pageSize, pageSize);//, resultSpec);
+            
             // initialize response collection
             IList<NoteModel> notes = new List<NoteModel>();
 
@@ -187,7 +189,7 @@ namespace org.livz.EvernoteAPIWrapper
             }
 
             // enumerate and build response
-            foreach (NoteMetadata note in newNotes.Notes)
+            foreach (Note note in newNotes.Notes)
             {
                 // if the db timestamp is the same or later than the note then ignore it
                 // is the timestamp which is the last time this project was checked
@@ -195,22 +197,35 @@ namespace org.livz.EvernoteAPIWrapper
                 {
                     continue;
                 }
-
-                // we have a note so we need to get the full content - we will extract the text for now and maybe images
-                string content = _Instance.getNoteContent(_authToken, note.Guid);
-
-                // we have a new note - etl the data
-                NoteModel newnote = new NoteModel();
-                newnote.ExternalId = new Guid(note.Guid);
-                newnote.Title = note.Title;
-                newnote.Text = ParseContent(note, content, resolver);
-                newnote.DateCreated = DateTime.Now;
-                newnote.DateModified = DateTime.Now;
                 
-                notes.Add(newnote);
+                notes.Add(BuildNote(note, resolver));
             }
 
             return notes;
+        }
+
+        /// <summary>
+        /// Builds a note that can be displayed within Viq.
+        /// </summary>
+        /// <param name="note"></param>
+        /// <param name="resolver"></param>
+        /// <returns></returns>
+        private NoteModel BuildNote(Note note, TextResolver resolver)
+        {
+            // we have a note so we need to get the full content - we will extract the text for now and maybe images
+            string content = _Instance.getNoteContent(_authToken, note.Guid);
+
+            // we have a new note - etl the data
+            NoteModel newnote = new NoteModel();
+            newnote.ExternalId = new Guid(note.Guid);
+            newnote.Title = note.Title;
+            newnote.Timestamp = note.Updated;
+            newnote.Text = ParseContent(note, content, resolver);
+            newnote.DateCreated = DateTime.Now;
+            newnote.DateModified = DateTime.Now;
+            newnote.Notebook = new Guid(note.NotebookGuid);
+
+            return newnote;
         }
 
         /// <summary>
@@ -219,7 +234,7 @@ namespace org.livz.EvernoteAPIWrapper
         /// <param name="content"></param>
         /// <param name="resolver"></param>
         /// <returns></returns>
-        private string ParseContent(NoteMetadata note, string content, TextResolver resolver)
+        private string ParseContent(Note note, string content, TextResolver resolver)
         {
             switch (resolver)
             {
@@ -240,7 +255,7 @@ namespace org.livz.EvernoteAPIWrapper
 
         #region remove markup
 
-        public string BasicContent(NoteMetadata note, string content)
+        public string BasicContent(Note note, string content)
         {
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(content);
@@ -263,7 +278,7 @@ namespace org.livz.EvernoteAPIWrapper
         /// </summary>
         /// <param name="note"></param>
         /// <param name="html"></param>
-        void ResolveMedia(NoteMetadata note, HtmlAgilityPack.HtmlDocument html)
+        void ResolveMedia(Note note, HtmlAgilityPack.HtmlDocument html)
         {
             if (note == null) return;
 
